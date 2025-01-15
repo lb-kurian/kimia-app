@@ -46,7 +46,7 @@ export default function Home() {
 
   if (!showAuth) {
     return (
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen flex flex-col bg-gray-100">
         <header className="bg-white shadow-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center">
             <h1 className="text-3xl font-bold text-gray-900">BrandBoost AI</h1>
@@ -59,42 +59,44 @@ export default function Home() {
           </div>
         </header>
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <section className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Revolutionize Your Social Media Presence</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              BrandBoost AI is your all-in-one solution for creating, scheduling, and managing 
-              AI-powered social media content across all platforms. Elevate your brand's online 
-              presence and save time with our cutting-edge technology.
-            </p>
-          </section>
+        <div className="flex-grow">
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <section className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">Revolutionize Your Social Media Presence</h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                BrandBoost AI is your all-in-one solution for creating, scheduling, and managing 
+                AI-powered social media content across all platforms. Elevate your brand's online 
+                presence and save time with our cutting-edge technology.
+              </p>
+            </section>
 
-          <section className="grid md:grid-cols-3 gap-8 mb-12">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-semibold mb-2">AI-Powered Content Creation</h3>
-              <p className="text-gray-600">Generate unique, brand-specific content using advanced AI algorithms tailored to your audience.</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-semibold mb-2">Multi-Platform Posting</h3>
-              <p className="text-gray-600">Seamlessly post your content across all major social media platforms from a single dashboard.</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-semibold mb-2">Smart Scheduling</h3>
-              <p className="text-gray-600">Optimize your posting times with our AI-driven scheduling system for maximum engagement.</p>
-            </div>
-          </section>
+            <section className="grid md:grid-cols-3 gap-8 mb-12">
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-xl font-semibold mb-2">AI-Powered Content Creation</h3>
+                <p className="text-gray-600">Generate unique, brand-specific content using advanced AI algorithms tailored to your audience.</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-xl font-semibold mb-2">Multi-Platform Posting</h3>
+                <p className="text-gray-600">Seamlessly post your content across all major social media platforms from a single dashboard.</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="text-xl font-semibold mb-2">Smart Scheduling</h3>
+                <p className="text-gray-600">Optimize your posting times with our AI-driven scheduling system for maximum engagement.</p>
+              </div>
+            </section>
 
-          <div className="text-center">
-            <button 
-              onClick={() => setShowAuth(true)}
-              className="bg-primary text-white py-3 px-6 rounded-lg text-lg font-semibold hover:bg-primary-dark transition duration-200"
-            >
-              Boost Your Brand Now
-            </button>
-          </div>
-        </main>
+            <div className="text-center">
+              <button 
+                onClick={() => setShowAuth(true)}
+                className="bg-primary text-white py-3 px-6 rounded-lg text-lg font-semibold hover:bg-primary-dark transition duration-200"
+              >
+                Boost Your Brand Now
+              </button>
+            </div>
+          </main>
+        </div>
 
-        <footer className="bg-gray-800 text-white py-8 mt-12">
+        <footer className="bg-gray-800 text-white py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <p>&copy; 2025 BrandBoost AI. All rights reserved.</p>
           </div>
@@ -106,7 +108,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-100">
       {/* Left column - Authentication */}
-      <div className="md:w-1/2 bg-white p-8 flex flex-col justify-center">
+      <div className="md:w-2/5 bg-white p-8 flex flex-col justify-center">
         <div className="max-w-md mx-auto w-full">
           <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
             {authMode === 'signin' ? 'Sign In' : authMode === 'signup' ? 'Sign Up' : 'Forgot Password'}
@@ -162,7 +164,7 @@ export default function Home() {
       </div>
 
       {/* Right column - Application description */}
-      <div className="md:w-1/2 bg-gray-800 text-white p-8 flex flex-col justify-center">
+      <div className="md:w-3/5 bg-gray-800 text-white p-8 flex flex-col justify-center">
         <div className="max-w-md mx-auto">
           <h2 className="text-3xl font-bold mb-4">BrandBoost AI</h2>
           <p className="mb-6">

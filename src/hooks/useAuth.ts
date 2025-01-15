@@ -7,19 +7,23 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClientComponentClient()
 
   useEffect(() => {
-    const setData = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession()
-      if (error) {
-        console.error('Error fetching session:', error)
-      } else {
+    const checkSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        if (error) throw error
         setSession(session)
         setUser(session?.user ?? null)
+      } catch (error) {
+        console.error('Error checking session:', error)
+        setError('Failed to retrieve session. Please try again.')
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -28,50 +32,68 @@ export function useAuth() {
       setLoading(false)
     })
 
-    setData()
+    checkSession()
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [supabase.auth])
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    })
-    if (error) throw error
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+      if (error) throw error
+      return { success: true, message: 'Sign-up successful. Please check your email for verification.' }
+    } catch (error) {
+      console.error('Sign-up error:', error)
+      return { success: false, message: error instanceof Error ? error.message : 'An unexpected error occurred during sign-up.' }
+    }
   }
 
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) {
-      if (error.message.includes('Email not confirmed')) {
-        throw new Error('Email not confirmed')
-      }
-      throw error
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) throw error
+      return { success: true, session: data.session }
+    } catch (error) {
+      console.error('Sign-in error:', error)
+      return { success: false, message: error instanceof Error ? error.message : 'An unexpected error occurred during sign-in.' }
     }
-    return data
   }
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
-    router.push('/')
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+      router.push('/')
+    } catch (error) {
+      console.error('Sign-out error:', error)
+      setError('Failed to sign out. Please try again.')
+    }
   }
 
   const forgotPassword = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
-    })
-    if (error) throw error
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      })
+      if (error) throw error
+      return { success: true, message: 'Password reset instructions have been sent to your email.' }
+    } catch (error) {
+      console.error('Forgot password error:', error)
+      return { success: false, message: error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.' }
+    }
   }
 
   return {
     user,
     session,
     loading,
+    error,
     signUp,
     signIn,
     signOut,
