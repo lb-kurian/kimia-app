@@ -2,13 +2,14 @@ import './globals.css'
 import { Inter, Gugi } from 'next/font/google'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 
 const inter = Inter({ subsets: ['latin'] })
 const gugi = Gugi({ weight: '400', subsets: ['latin'], variable: '--font-gugi' })
 
 export const metadata = {
   title: 'BrandBoost AI',
-  description: 'A modern content crea application',
+  description: 'A modern content creation application',
 }
 
 export default async function RootLayout({
@@ -23,6 +24,12 @@ export default async function RootLayout({
     data: { session },
   } = await supabase.auth.getSession()
 
+  if (session && (await cookieStore).get('redirect')) {
+    const redirectUrl = (await cookieStore).get('redirect')?.value
+    ;(await cookieStore).delete('redirect')
+    redirect(redirectUrl || '/dashboard')
+  }
+
   return (
     <html lang="en">
       <body className={`${inter.className} ${gugi.variable}`}>
@@ -33,5 +40,4 @@ export default async function RootLayout({
     </html>
   )
 }
-
 
