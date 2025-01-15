@@ -12,7 +12,8 @@ export async function middleware(req: NextRequest) {
 
   // If the user is not authenticated and trying to access protected routes, redirect to signin
   if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
-    const redirectUrl = new URL('/auth/signin', req.url)
+    // const redirectUrl = new URL('/auth/signin', req.url)
+    const redirectUrl = new URL('/', req.url)
     return NextResponse.redirect(redirectUrl)
   }
 

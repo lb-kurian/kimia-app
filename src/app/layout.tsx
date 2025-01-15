@@ -1,13 +1,15 @@
 import './globals.css'
-import { Inter } from 'next/font/google'
+import { Inter, Gugi } from 'next/font/google'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 
 const inter = Inter({ subsets: ['latin'] })
+const gugi = Gugi({ weight: '400', subsets: ['latin'], variable: '--font-gugi' })
+
 
 export const metadata = {
   title: 'BrandBoost AI',
-  description: 'A modern content creation application',
+  description: 'A modern content crea application',
 }
 
 export default async function RootLayout({

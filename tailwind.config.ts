@@ -9,9 +9,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#3ECF8E',
-        'primary-dark': '#38B97C',
-        'text-dark': '#1a202c',
+        primary: '#0070f3',
+        'primary-dark': '#0050a3',
+        'kmia-blue': '#038BAF',
+        'kmia-dark-blue': '#173154',
+        'kmia-orange': '#F57618',
+      },
+      fontFamily: {
+        'gugi': ['var(--font-gugi)'],
       },
     },
   },
