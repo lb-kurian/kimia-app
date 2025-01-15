@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function ForgotPassword() {
@@ -12,13 +11,13 @@ export default function ForgotPassword() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setMessage(null)
+    setError(null)
     try {
       await forgotPassword(email)
-      setMessage('Check your email for the password reset link')
-      setError(null)
-    } catch (error) {
-      setError('Failed to send reset email')
-      setMessage(null)
+      setMessage('Password reset instructions have been sent to your email.')
+    } catch (error: any) {
+      setError('An error occurred. Please try again later.')
     }
   }
 
@@ -41,15 +40,11 @@ export default function ForgotPassword() {
             />
           </div>
           <button type="submit" className="w-full bg-primary text-white py-2 rounded hover:bg-primary-dark transition duration-200">
-            Send Reset Link
+            Reset Password
           </button>
         </form>
-        <div className="mt-4 text-center">
-          <Link href="/auth/signin" className="text-primary hover:underline">
-            Back to Sign In
-          </Link>
-        </div>
       </div>
     </div>
   )
 }
+

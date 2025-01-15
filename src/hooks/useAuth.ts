@@ -46,17 +46,19 @@ export function useAuth() {
 
   const signIn = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) throw error
+    if (error) {
+      if (error.message.includes('Email not confirmed')) {
+        throw new Error('Email not confirmed')
+      }
+      throw error
+    }
     return data
   }
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut()
-    if (error) {
-      console.error('Error signing out:', error)
-    } else {
-      router.push('/')
-    }
+    if (error) throw error
+    router.push('/')
   }
 
   const forgotPassword = async (email: string) => {

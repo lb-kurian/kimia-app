@@ -1,9 +1,10 @@
 import './globals.css'
-import { Inter } from 'next/font/google'
+import { Inter, Gugi } from 'next/font/google'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 
 const inter = Inter({ subsets: ['latin'] })
+const gugi = Gugi({ weight: '400', subsets: ['latin'], variable: '--font-gugi' })
 
 export const metadata = {
   title: 'BrandBoost AI',
@@ -15,7 +16,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = createServerComponentClient({ cookies })
+  const cookieStore = cookies()
+  const supabase = createServerComponentClient({ cookies: () => cookieStore })
   
   const {
     data: { session },
@@ -23,7 +25,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} ${gugi.variable}`}>
         <div className="min-h-screen flex flex-col">
           {children}
         </div>
