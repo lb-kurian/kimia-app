@@ -6,7 +6,6 @@ import { cookies } from 'next/headers'
 const inter = Inter({ subsets: ['latin'] })
 const gugi = Gugi({ weight: '400', subsets: ['latin'], variable: '--font-gugi' })
 
-
 export const metadata = {
   title: 'BrandBoost AI',
   description: 'A modern content crea application',
@@ -17,7 +16,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = createServerComponentClient({ cookies })
+  const cookieStore = cookies()
+  const supabase = createServerComponentClient({ cookies: () => cookieStore })
   
   const {
     data: { session },
@@ -25,7 +25,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} ${gugi.variable}`}>
         <div className="min-h-screen flex flex-col">
           {children}
         </div>
@@ -33,4 +33,5 @@ export default async function RootLayout({
     </html>
   )
 }
+
 
