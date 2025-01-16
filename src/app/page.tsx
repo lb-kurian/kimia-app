@@ -29,7 +29,7 @@ export default function Home() {
         const { error } = await signUp(email, password)
         if (error) throw error
         setAuthMode('signin')
-        setError('Account created. Please sign in.')
+        setError('Sign-up successful. Please check your email for verification.')
       } else if (authMode === 'forgot') {
         const { error } = await forgotPassword(email)
         if (error) throw error
