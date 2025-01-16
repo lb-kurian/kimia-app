@@ -1,0 +1,1 @@
+export { BrandInfo } from "./BrandInfo";
