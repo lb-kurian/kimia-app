@@ -1,1 +1,0 @@
-export { BrandInfo } from "./BrandInfo";

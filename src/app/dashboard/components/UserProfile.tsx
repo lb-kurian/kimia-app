@@ -1,6 +1,9 @@
 import * as React from "react";
+import { useAuth } from '@/hooks/useAuth';
 
 export function UserProfile() {
+  const { signOut } = useAuth();
+
   return (
     <div className="flex absolute left-9 z-0 flex-col pt-9 max-w-full h-36 text-sm font-medium tracking-wide bottom-[139px] text-neutral-800 w-[135px]">
       <div className="flex z-10 flex-col mb-0 max-md:mb-2.5">
@@ -21,7 +24,7 @@ export function UserProfile() {
             icon="https://cdn.builder.io/api/v1/image/assets/TEMP/258bffb6fc5ce2c46a29250f6555aed77f1547a30126c6fd8a6156f00aa2f81a?placeholderIfAbsent=true&apiKey=14a7292a75f846b897d9b0e6987ce9ff"
             text="Help"
           />
-          <ProfileItem
+          <ProfileItem  onClick={signOut}
             icon="https://cdn.builder.io/api/v1/image/assets/TEMP/ddeab1bd0de8641ca79b559d07a87538dd7bce175aa6856fab62720aa36779ed?placeholderIfAbsent=true&apiKey=14a7292a75f846b897d9b0e6987ce9ff"
             text="Logout Account"
           />

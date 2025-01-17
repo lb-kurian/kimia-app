@@ -29,7 +29,7 @@ export default function SignUp() {
     <div className="flex min-h-screen">
       {/* Left side - 40% */}
       <div className="w-2/5 bg-primary flex items-center justify-center">
-        <h1 className="text-4xl font-bold text-white">Join BrandBoost AI</h1>
+        <h1 className="text-4xl font-bold text-white">Join KIMIA</h1>
       </div>
       {/* Right side - 60% */}
       <div className="w-3/5 bg-gray-100 flex items-center justify-center">

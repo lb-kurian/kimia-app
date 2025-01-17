@@ -1,5 +1,5 @@
 
-import  { Sidebar } from '@/components/brandSetup'
+import  MyComponent  from '@/components/Onboarding/MainComponent'
 
 export default function profile({
   children,
@@ -7,7 +7,7 @@ export default function profile({
   children: React.ReactNode
 }) {
   return (
-      <Sidebar />
+      <MyComponent />
       
   )
 }

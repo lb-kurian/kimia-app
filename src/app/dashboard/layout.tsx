@@ -1,18 +1,14 @@
 
-import  {Sidebar}  from './components/Sidebar'
+import  MyComponent  from '@/components/Onboarding/MainComponent'
 
-export default function DashboardLayout({
+export default function profile({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <div className="flex min-h-screen bg-white">
-      <Sidebar />
-      <main className="flex-1 p-6 overflow-auto">
-        {children}
-      </main>
-    </div>
+      <MyComponent />
+      
   )
 }
 

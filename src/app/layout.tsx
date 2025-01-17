@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] })
 const gugi = Gugi({ weight: '400', subsets: ['latin'], variable: '--font-gugi' })
 
 export const metadata = {
-  title: 'BrandBoost AI',
+  title: 'KIMIA',
   description: 'A modern content creation application',
 }
 

@@ -11,6 +11,7 @@ export function Logo() {
         </div>
         <img
           loading="lazy"
+          // src="/pubic/logo.svg"
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/2de10a18e7603a4e34c89f51c28d01815c3527909a287a03553b0f9de5be61cf?placeholderIfAbsent=true&apiKey=14a7292a75f846b897d9b0e6987ce9ff"
           className="object-contain z-0 shrink-0 my-auto rounded-none aspect-[0.6] w-[15px]"
           alt="Logo icon"

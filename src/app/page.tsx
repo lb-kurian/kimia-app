@@ -49,7 +49,7 @@ export default function Home() {
       <div className="min-h-screen flex flex-col bg-gray-100">
         <header className="bg-white shadow-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">BrandBoost AI</h1>
+            <h1 className="text-3xl font-bold text-gray-900"> KIMIA </h1>
             <button 
               onClick={() => setShowAuth(true)}
               className="bg-primary text-white py-2 px-4 rounded hover:bg-primary-dark transition duration-200"
@@ -64,7 +64,7 @@ export default function Home() {
             <section className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">Revolutionize Your Social Media Presence</h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                BrandBoost AI is your all-in-one solution for creating, scheduling, and managing 
+                KIMIA  is your all-in-one solution for creating, scheduling, and managing 
                 AI-powered social media content across all platforms. Elevate your brand's online 
                 presence and save time with our cutting-edge technology.
               </p>
@@ -98,7 +98,7 @@ export default function Home() {
 
         <footer className="bg-gray-800 text-white py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; 2025 BrandBoost AI. All rights reserved.</p>
+            <p>&copy; 2025 KIMIA. All rights reserved.</p>
           </div>
         </footer>
       </div>
@@ -166,9 +166,9 @@ export default function Home() {
       {/* Right column - Application description */}
       <div className="md:w-3/5 bg-gray-800 text-white p-8 flex flex-col justify-center">
         <div className="max-w-md mx-auto">
-          <h2 className="text-3xl font-bold mb-4">BrandBoost AI</h2>
+          <h2 className="text-3xl font-bold mb-4">KIMIA</h2>
           <p className="mb-6">
-            Welcome to BrandBoost AI, the ultimate solution for creating and managing 
+            Welcome to KIMIA, the ultimate solution for creating and managing 
             AI-powered social media content. Our platform offers a seamless experience 
             with cutting-edge features designed to elevate your brand's online presence 
             and save you valuable time and resources.
