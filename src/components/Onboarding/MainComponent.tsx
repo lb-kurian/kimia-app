@@ -1,36 +1,59 @@
-'use client';
-import React, { useState } from 'react'
-import Header from './Header'
-import Navbar from './Navbar'
-import BrandInfoSection from './BrandInfoSection'
-import InspirationSection from './InspirationSection'
-import BrainstormingSection from './BrainstormingSection'
-import SmartPublisherSection from './SmartPublisherSection'
+"use client";
+import React, { useState } from "react";
+import Header from "./Header";
+import Navbar from "./Navbar";
+import BrandInfoSection from "./BrandInfoSection";
+import InspirationSection from "./InspirationSection";
+import BrainstormingSection from "./BrainstormingSection";
+import SmartPublisherSection from "./SmartPublisherSection";
+import { useRouter } from "next/navigation";
 
 const pages = [
-  { id: 'brandInfo', title: 'Brand Info', component: BrandInfoSection, image: '/images/onboarding/brand-info-image.svg' },
-  { id: 'inspiration', title: 'Inspiration', component: InspirationSection, image: '/images/onboarding/inspiration-image.svg' },
-  { id: 'brainstorming', title: 'Brainstorming', component: BrainstormingSection, image: '/images/onboarding/brainstorming-image.svg' },
-  { id: 'smartPublisher', title: 'Smart Publisher', component: SmartPublisherSection, image: '/images/onboarding/smart-publisher-image.svg' },
-]
+  {
+    id: "brandInfo",
+    title: "Brand Info",
+    component: BrandInfoSection,
+    image: "/images/onboarding/brand-info-image.svg",
+  },
+  {
+    id: "inspiration",
+    title: "Inspiration",
+    component: InspirationSection,
+    image: "/images/onboarding/inspiration-image.svg",
+  },
+  {
+    id: "brainstorming",
+    title: "Brainstorming",
+    component: BrainstormingSection,
+    image: "/images/onboarding/brainstorming-image.svg",
+  },
+  {
+    id: "smartPublisher",
+    title: "Smart Publisher",
+    component: SmartPublisherSection,
+    image: "/images/onboarding/smart-publisher-image.svg",
+  },
+];
 
 const MyComponent: React.FC = () => {
-  const [currentPageIndex, setCurrentPageIndex] = useState(0)
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const router = useRouter();
 
   const handleNext = () => {
     if (currentPageIndex < pages.length - 1) {
-      setCurrentPageIndex(currentPageIndex + 1)
+      setCurrentPageIndex(currentPageIndex + 1);
     }
-  }
+  };
 
   const handlePrevious = () => {
     if (currentPageIndex > 0) {
-      setCurrentPageIndex(currentPageIndex - 1)
+      setCurrentPageIndex(currentPageIndex - 1);
     }
-  }
+  };
 
-  const CurrentPageComponent = pages[currentPageIndex].component
-  const baseButtonClasses = "w-[107px] py-2.5 px-4 rounded-lg border border-solid border-zinc-400"
+  const CurrentPageComponent = pages[currentPageIndex].component;
+  const baseButtonClasses =
+    "w-[107px] py-2.5 px-4 rounded-lg border border-solid border-zinc-400";
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -38,10 +61,14 @@ const MyComponent: React.FC = () => {
         <Header />
         <Navbar currentPageIndex={currentPageIndex} pages={pages} />
       </div>
-      <div className="flex-grow px-10 pb-10 pt-6"> {/* Update 1: Added pt-6 */}
+      <div className="flex-grow px-10 pb-10 pt-6">
+        {" "}
+        {/* Update 1: Added pt-6 */}
         <div className="flex gap-8 h-full max-md:flex-col">
           <div className="w-[59%] max-md:w-full">
-            <div className="h-[calc(100vh-180px)] overflow-y-auto pr-4"> {/* Update 2: Changed height calculation */}
+            <div className="h-[calc(100vh-180px)] overflow-y-auto pr-4">
+              {" "}
+              {/* Update 2: Changed height calculation */}
               <CurrentPageComponent />
             </div>
           </div>
@@ -71,12 +98,20 @@ const MyComponent: React.FC = () => {
                     Next
                   </button>
                 ) : (
-                  <button
-                    onClick={() => console.log('Finish clicked')}
-                    className={`${baseButtonClasses} bg-cyan-500 text-white`}
-                  >
-                    Finish
-                  </button>
+                  <>
+                    <button
+                      onClick={() => {
+                        console.log("Redirecting to dashboard...");
+                        setCurrentPageIndex(0); // Reset to the first page
+
+                        // In a real application, you would use Next.js routing here
+                        router.push("/dashboard");
+                      }}
+                      className={`${baseButtonClasses} bg-cyan-500 text-white`}
+                    >
+                      Finish
+                    </button>
+                  </>
                 )}
               </div>
             </div>
@@ -84,8 +119,7 @@ const MyComponent: React.FC = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default MyComponent
-
+export default MyComponent;
