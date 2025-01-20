@@ -1,7 +1,7 @@
 
-import  MyComponent  from '@/components/Onboarding/MainComponent'
+import  MyComponent  from '../_components/onboarding/MainComponent'
 
-export default function profile({
+export default function onboarding({
   children,
 }: {
   children: React.ReactNode

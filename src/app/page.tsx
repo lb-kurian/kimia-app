@@ -72,15 +72,15 @@ export default function Home() {
 
             <section className="grid md:grid-cols-3 gap-8 mb-12">
               <div className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-semibold mb-2">AI-Powered Content Creation</h3>
+                <h3 className="text-gray-600 font-semibold mb-2">AI-Powered Content Creation</h3>
                 <p className="text-gray-600">Generate unique, brand-specific content using advanced AI algorithms tailored to your audience.</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-semibold mb-2">Multi-Platform Posting</h3>
+                <h3 className="text-gray-600 font-semibold mb-2">Multi-Platform Posting</h3>
                 <p className="text-gray-600">Seamlessly post your content across all major social media platforms from a single dashboard.</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-semibold mb-2">Smart Scheduling</h3>
+                <h3 className="text-gray-600 font-semibold mb-2">Smart Scheduling</h3>
                 <p className="text-gray-600">Optimize your posting times with our AI-driven scheduling system for maximum engagement.</p>
               </div>
             </section>
@@ -122,7 +122,7 @@ export default function Home() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border rounded"
+                className="w-full px-3 py-2 border rounded bg-gray-50 text-black"
                 required
               />
             </div>
@@ -134,7 +134,7 @@ export default function Home() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 border rounded"
+                  className="w-full px-3 py-2 border rounded bg-gray-50 text-black"
                   required
                 />
               </div>

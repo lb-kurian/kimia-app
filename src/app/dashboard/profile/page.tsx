@@ -1,5 +1,5 @@
 
-import  MyComponent  from '@/components/Onboarding/MainComponent'
+import  MyComponent  from '@/components/onboarding/MainComponent'
 
 export default function profile({
   children,

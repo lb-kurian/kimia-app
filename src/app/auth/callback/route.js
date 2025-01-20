@@ -24,5 +24,5 @@ export async function GET(request) {
   }
 
   // Redirect after successful login
-  return NextResponse.redirect(requestUrl.origin)
+  return NextResponse.redirect(requestUrl.origin + '/onboarding')
 }
