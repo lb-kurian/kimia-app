@@ -10,7 +10,7 @@ const tabs = [
   { label: "Target audience", isActive: false },
 ];
 
-const brandColors = [
+const brandColors = [ 
   { color: "#3B82F6" },
   { color: "#F9A8D4" },
   { color: "#D1D5DB" },
