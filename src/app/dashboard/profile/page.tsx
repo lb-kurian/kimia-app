@@ -1,5 +1,5 @@
 
-import  MyComponent  from '@/components/onboarding/MainComponent'
+import  {BrandDefinition}  from '@/components/Brandpages/BrandDefinition'
 
 export default function profile({
   children,
@@ -7,7 +7,7 @@ export default function profile({
   children: React.ReactNode
 }) {
   return (
-      <MyComponent />
+      <BrandDefinition />
       
   )
 }
