@@ -2,7 +2,15 @@ import * as React from "react";
 import { useAuth } from '@/hooks/useAuth';
 
 export function UserProfile() {
-  const { signOut } = useAuth();
+  const { signOut } = useAuth(); 
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   return (
     <div className="flex absolute left-9 z-0 flex-col pt-9 max-w-full h-36 text-sm font-medium tracking-wide bottom-[139px] text-neutral-800 w-[135px]">
@@ -24,7 +32,8 @@ export function UserProfile() {
             icon="https://cdn.builder.io/api/v1/image/assets/TEMP/258bffb6fc5ce2c46a29250f6555aed77f1547a30126c6fd8a6156f00aa2f81a?placeholderIfAbsent=true&apiKey=14a7292a75f846b897d9b0e6987ce9ff"
             text="Help"
           />
-          <ProfileItem  onClick={signOut}
+          <ProfileItem
+            onClick={handleSignOut}
             icon="https://cdn.builder.io/api/v1/image/assets/TEMP/ddeab1bd0de8641ca79b559d07a87538dd7bce175aa6856fab62720aa36779ed?placeholderIfAbsent=true&apiKey=14a7292a75f846b897d9b0e6987ce9ff"
             text="Logout Account"
           />
@@ -43,11 +52,15 @@ export function UserProfile() {
 interface ProfileItemProps {
   icon: string;
   text: string;
+  onClick?: () => void; // Make onClick optional
 }
 
-function ProfileItem({ icon, text }: ProfileItemProps) {
+function ProfileItem({ icon, text, onClick }: ProfileItemProps) {
   return (
-    <div className="flex gap-2 items-start mt-2 w-full whitespace-nowrap">
+    <div
+      className="flex gap-2 items-start mt-2 w-full whitespace-nowrap cursor-pointer"
+      onClick={onClick} // Attach onClick if provided
+    >
       <img
         loading="lazy"
         src={icon}

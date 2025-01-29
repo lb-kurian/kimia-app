@@ -1,5 +1,5 @@
 
-import  {BrandDefinition}  from '@/components/Brandpages/BrandDefinition'
+import  {BrandDefinition}  from '@/components/BrandPages/BrandDefinition';
 
 export default function profile({
   children,

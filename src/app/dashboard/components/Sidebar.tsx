@@ -5,6 +5,7 @@ import { NavigationMenu } from "./NavigationMenu";
 import { UserProfile } from "./UserProfile";
 
 export function Sidebar() {
+  
   return (
     <div className="flex flex-col w-1/5 max-md:ml-0 max-md:w-full border-r border-gray-200">
       <div className="flex grow max-md:mt-3.5">
