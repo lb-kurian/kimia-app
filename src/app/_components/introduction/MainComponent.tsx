@@ -10,32 +10,32 @@ import InspirationSection from "./InspirationSection"
 import BrainstormingSection from "./BrainstormingSection"
 import SmartPublisherSection from "./SmartPublisherSection"
 import { LanguageProvider, useLanguage } from "../../../contexts/LanguageContext"
-import { buttonText } from "../../../locales/onboarding/buttonText"
+import { buttonText } from "../../../locales/introduction/buttonText"
 
 const pages = [
   {
     id: "brandInfo",
     title: { en: "Brand Info", es: "Información de Marca", de: "Markeninfo" },
     component: BrandInfoSection,
-    image: "/images/onboarding/brand-info-image.svg",
+    image: "/images/introduction/brand-info-image.svg",
   },
   {
     id: "inspiration",
     title: { en: "Inspiration", es: "Inspiración", de: "Inspiration" },
     component: InspirationSection,
-    image: "/images/onboarding/inspiration-image.svg",
+    image: "/images/introduction/inspiration-image.svg",
   },
   {
     id: "brainstorming",
     title: { en: "Brainstorming", es: "Lluvia de Ideas", de: "Brainstorming" },
     component: BrainstormingSection,
-    image: "/images/onboarding/brainstorming-image.svg",
+    image: "/images/introduction/brainstorming-image.svg",
   },
   {
     id: "smartPublisher",
     title: { en: "Smart Publisher", es: "Publicador Inteligente", de: "Smart Publisher" },
     component: SmartPublisherSection,
-    image: "/images/onboarding/smart-publisher-image.svg",
+    image: "/images/introduction/smart-publisher-image.svg",
   },
 ]
 

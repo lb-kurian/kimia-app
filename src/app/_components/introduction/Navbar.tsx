@@ -16,7 +16,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentPageIndex, pages }) => {
         {pages.map((page, index) => (
           <div key={page.id} className="flex items-center gap-4">
             <Image
-              src={`/images/onboarding/${page.id}-icon.png`}
+              src={`/images/introduction/${page.id}-icon.png`}
               alt={`${page.title[language as keyof typeof page.title]} Icon`}
               width={36}
               height={36}

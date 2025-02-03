@@ -2,17 +2,16 @@ export const buttonText = {
   en: {
     back: "Back",
     next: "Next",
-    finish: "Finish",
+    finish: "Start Onboarding",
   },
   es: {
     back: "Atrás",
     next: "Siguiente",
-    finish: "Finalizar",
+    finish: "Iniciar incorporación",
   },
   de: {
     back: "Zurück",
     next: "Weiter",
-    finish: "Fertig",
+    finish: "Onboarding starten",
   },
-} as const
-
+}

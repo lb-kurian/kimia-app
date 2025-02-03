@@ -1,10 +1,10 @@
 import type React from "react"
 import { useLanguage } from "../../../contexts/LanguageContext"
-import { brandInfoContent } from "../../../locales/onboarding/brandinfo"
+import { smartPublisherContent } from "../../../locales/introduction/smartPublisher"
 
-const BrandInfoSection: React.FC = () => {
+const SmartPublisherSection: React.FC = () => {
   const { language } = useLanguage()
-  const content = brandInfoContent[language as keyof typeof brandInfoContent]
+  const content = smartPublisherContent[language as keyof typeof smartPublisherContent]
 
   return (
     <div className="flex flex-col tracking-normal">
@@ -21,5 +21,5 @@ const BrandInfoSection: React.FC = () => {
   )
 }
 
-export default BrandInfoSection
+export default SmartPublisherSection
 

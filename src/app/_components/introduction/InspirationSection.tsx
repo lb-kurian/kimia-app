@@ -1,6 +1,6 @@
 import type React from "react"
 import { useLanguage } from "../../../contexts/LanguageContext"
-import { inspirationContent } from "../../../locales/onboarding/inspiration"
+import { inspirationContent } from "../../../locales/introduction/inspiration"
 
 const InspirationSection: React.FC = () => {
   const { language } = useLanguage()
