@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
+import Image from "next/image";
 
 export default function Home() {
   const [email, setEmail] = useState('')
@@ -49,8 +50,13 @@ export default function Home() {
       <div className="min-h-screen flex flex-col bg-gray-100">
         <header className="bg-white shadow-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900"> KIMIA </h1>
-            <button 
+          <Image
+          src="/logo.svg"
+          alt="KIMIA Logo"
+          width={206}
+          height={4}
+          className="mb-8"
+        />            <button 
               onClick={() => setShowAuth(true)}
               className="bg-primary text-white py-2 px-4 rounded hover:bg-primary-dark transition duration-200"
             >
