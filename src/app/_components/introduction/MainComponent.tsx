@@ -11,6 +11,7 @@ import BrainstormingSection from "./BrainstormingSection"
 import SmartPublisherSection from "./SmartPublisherSection"
 import { LanguageProvider, useLanguage } from "../../../contexts/LanguageContext"
 import { buttonText } from "../../../locales/introduction/buttonText"
+import { useRouter } from 'next/navigation'
 
 const pages = [
   {
@@ -59,6 +60,7 @@ const MainComponentContent: React.FC = () => {
   const [currentPageIndex, setCurrentPageIndex] = useState(0)
   const { language } = useLanguage()
   const [mounted, setMounted] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     setMounted(true)
@@ -76,6 +78,11 @@ const MainComponentContent: React.FC = () => {
     }
   }
 
+  const onboard = async () => {
+   
+    router.push('/onboarding')
+ 
+  }
   const CurrentPageComponent = pages[currentPageIndex].component
   const baseButtonClasses = "w-[107px] py-2.5 px-4 rounded-lg border border-solid border-zinc-400"
 
@@ -122,8 +129,8 @@ const MainComponentContent: React.FC = () => {
                 ) : (
                   <button
                     onClick={() => {
-                      console.log("Redirecting to dashboard...")
-                      setCurrentPageIndex(0)
+                      console.log("Redirecting to onboardning...")
+                      onboard()
                     }}
                     className={`${baseButtonClasses} bg-cyan-500 text-white`}
                   >

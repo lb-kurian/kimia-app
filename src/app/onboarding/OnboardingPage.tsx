@@ -1,16 +1,16 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { Layout } from "../../components/onboarding/Layout"
-import { Introduction } from "../../components/onboarding/Introduction"
-import { Tabs } from "../../components/onboarding/Tabs"
-import { BrandInformation } from "../../components/onboarding/brand-information/BrandInformation"
-import { BrandVoice } from "../../components/onboarding/brand-voice/BrandVoice"
-import { TargetAudience } from "../../components/onboarding/target-audience/TargetAudience"
-import { SystemSettings } from "../../components/onboarding/system-settings/SystemSettings"
-import { Workspace } from "../../components/onboarding/system-settings/Workspace"
-import { PageHeader } from "../../components/onboarding/common/PageHeader"
-import { SuccessScreen } from "../../components/onboarding/SuccessScreen"
+import { Layout } from "../_components/onboarding/Layout"
+import { Introduction } from "../_components/onboarding/Introduction"
+import { Tabs } from "../_components/onboarding/Tabs"
+import { BrandInformation } from "../_components/onboarding/brand-information/BrandInformation"
+import { BrandVoice } from "../_components/onboarding/brand-voice/BrandVoice"
+import { TargetAudience } from "../_components/onboarding/target-audience/TargetAudience"
+import { SystemSettings } from "../_components/onboarding/system-settings/SystemSettings"
+import { Workspace } from "../_components/onboarding/system-settings/Workspace"
+import { PageHeader } from "../_components/onboarding/common/PageHeader"
+import { SuccessScreen } from "../_components/onboarding/SuccessScreen"
 
 const sectionOrder = [
   "Introduction",
