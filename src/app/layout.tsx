@@ -19,7 +19,7 @@ export default async function RootLayout({
 }) {
   const cookieStore = cookies()
   const supabase = createServerComponentClient({ cookies: () => cookieStore })
-  
+
   const {
     data: { session },
   } = await supabase.auth.getSession()
