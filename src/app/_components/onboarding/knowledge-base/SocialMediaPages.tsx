@@ -1,9 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { MoreVertical, Plus, Trash2 } from "lucide-react"
+import { MoreVertical, Plus, Trash2, ExternalLink } from "lucide-react"
 import Image from "next/image"
 import { getApi, postApi, deleteApi } from "@/lib/apiClient"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { useToast } from "@/components/ui/use-toast"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 interface SocialMediaAccount {
   id: string
@@ -19,6 +23,7 @@ export function SocialMediaPages() {
   const [newHandle, setNewHandle] = useState("")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { toast } = useToast()
 
   useEffect(() => {
     fetchSocialAccounts()
@@ -46,6 +51,17 @@ export function SocialMediaPages() {
 
     try {
       setLoading(true)
+      // Check if the handle is already added
+      const existingAccount = socialAccounts.find((account) => account.file_url === newHandle)
+      if (existingAccount) {
+        toast({
+          title: "Account already exists",
+          description: "This social media account has already been added.",
+          variant: "destructive",
+        })
+        return
+      }
+
       const formData = new FormData()
       formData.append("url", newHandle)
       formData.append("uploadType", "social_media_page")
@@ -56,9 +72,17 @@ export function SocialMediaPages() {
       }
       setSocialAccounts((prev) => [addedAccount, ...prev])
       setNewHandle("")
+      toast({
+        title: "Social media account added",
+        description: "Your social media account has been successfully added.",
+      })
     } catch (error) {
       console.error("Error adding social media account:", error)
-      setError(error instanceof Error ? error.message : "Failed to add social media account")
+      toast({
+        title: "Failed to add account",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }
@@ -69,9 +93,17 @@ export function SocialMediaPages() {
       setLoading(true)
       await deleteApi("/api/onboarding/files", { id })
       setSocialAccounts((prev) => prev.filter((account) => account.id !== id))
+      toast({
+        title: "Social media account deleted",
+        description: "The social media account has been successfully deleted.",
+      })
     } catch (error) {
       console.error("Error deleting social media account:", error)
-      setError(error instanceof Error ? error.message : "Failed to delete social media account")
+      toast({
+        title: "Deletion failed",
+        description: error instanceof Error ? error.message : "Failed to delete social media account",
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }
@@ -93,7 +125,7 @@ export function SocialMediaPages() {
           </p>
 
           <form onSubmit={addSocialAccount} className="mb-8 flex items-center gap-2">
-            <input
+            <Input
               type="text"
               value={newHandle}
               onChange={(e) => setNewHandle(e.target.value)}
@@ -101,13 +133,13 @@ export function SocialMediaPages() {
               className="flex-grow rounded-lg border border-[#E8E8E8] p-3"
               required
             />
-            <button
+            <Button
               type="submit"
               className="flex items-center justify-center rounded-full border border-[#038baf] p-3 text-[#038baf] hover:bg-[#038baf]/5 transition-colors"
               aria-label="Add social media account"
             >
               <Plus className="h-5 w-5" />
-            </button>
+            </Button>
           </form>
 
           {loading && <p>Loading...</p>}
@@ -129,22 +161,30 @@ export function SocialMediaPages() {
                       className="w-full h-full object-contain"
                     />
                   </div>
-                  <span className="text-sm text-[#313D4F]">{account.file_url}</span>
+                  <a
+                    href={account.file_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-[#313D4F] hover:text-[#038baf] flex items-center gap-1"
+                  >
+                    {account.file_url}
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
                 </div>
-                <div className="relative group">
-                  <button className="text-[#979797] hover:text-[#313D4F]">
-                    <MoreVertical className="h-5 w-5" />
-                  </button>
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block">
-                    <button
-                      className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
-                      onClick={() => deleteSocialAccount(account.id)}
-                    >
-                      <Trash2 className="h-4 w-4 inline-block mr-2" />
-                      Delete
-                    </button>
-                  </div>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <span className="sr-only">Open menu</span>
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => deleteSocialAccount(account.id)} className="text-red-600">
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      <span>Delete</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             ))}
           </div>

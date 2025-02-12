@@ -1,8 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { MoreVertical, Plus, Trash2 } from "lucide-react"
+import { MoreVertical, Plus, Trash2, ExternalLink } from "lucide-react"
 import { getApi, postApi, deleteApi } from "@/lib/apiClient"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { useToast } from "@/components/ui/use-toast"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 interface LandingPage {
   id: string
@@ -29,6 +33,7 @@ export function LandingPages() {
   const [newPageUrl, setNewPageUrl] = useState("")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { toast } = useToast()
 
   useEffect(() => {
     fetchLandingPages()
@@ -53,6 +58,17 @@ export function LandingPages() {
 
     try {
       setLoading(true)
+      // Check if the URL is already added
+      const existingPage = landingPages.find((page) => page.file_url === newPageUrl)
+      if (existingPage) {
+        toast({
+          title: "URL already exists",
+          description: "This landing page URL has already been added.",
+          variant: "destructive",
+        })
+        return
+      }
+
       const formData = new FormData()
       formData.append("url", newPageUrl)
       formData.append("uploadType", "landing_page")
@@ -60,9 +76,17 @@ export function LandingPages() {
       const newPage = await postApi<LandingPage>("/api/onboarding/files", formData)
       setLandingPages((prev) => [newPage, ...prev])
       setNewPageUrl("")
+      toast({
+        title: "Landing page added",
+        description: "Your landing page URL has been successfully added.",
+      })
     } catch (error) {
       console.error("Error adding landing page:", error)
-      setError("Failed to add landing page")
+      toast({
+        title: "Failed to add landing page",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }
@@ -73,9 +97,17 @@ export function LandingPages() {
       setLoading(true)
       await deleteApi("/api/onboarding/files", { id })
       setLandingPages((prev) => prev.filter((page) => page.id !== id))
+      toast({
+        title: "Landing page deleted",
+        description: "The landing page has been successfully deleted.",
+      })
     } catch (error) {
       console.error("Error deleting landing page:", error)
-      setError("Failed to delete landing page")
+      toast({
+        title: "Deletion failed",
+        description: error instanceof Error ? error.message : "Failed to delete landing page",
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }
@@ -91,7 +123,7 @@ export function LandingPages() {
           </p>
 
           <form onSubmit={addLandingPage} className="mb-8 flex items-center gap-2">
-            <input
+            <Input
               type="url"
               value={newPageUrl}
               onChange={(e) => setNewPageUrl(e.target.value)}
@@ -99,13 +131,13 @@ export function LandingPages() {
               className="flex-grow rounded-lg border border-[#E8E8E8] p-3"
               required
             />
-            <button
+            <Button
               type="submit"
               className="flex items-center justify-center rounded-full border border-[#038baf] p-3 text-[#038baf] hover:bg-[#038baf]/5 transition-colors"
               aria-label="Add landing page"
             >
               <Plus className="h-5 w-5" />
-            </button>
+            </Button>
           </form>
 
           {loading && <p>Loading...</p>}
@@ -116,22 +148,30 @@ export function LandingPages() {
               <div key={page.id} className="flex items-center justify-between rounded-lg border border-[#E8E8E8] p-4">
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8 rounded-full bg-gradient-to-r from-[#4880FF] to-[#F57618]" />
-                  <span className="text-sm text-[#313D4F]">{page.file_url}</span>
+                  <a
+                    href={page.file_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-[#313D4F] hover:text-[#038baf] flex items-center gap-1"
+                  >
+                    {page.file_url}
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
                 </div>
-                <div className="relative group">
-                  <button className="text-[#979797] hover:text-[#313D4F]">
-                    <MoreVertical className="h-5 w-5" />
-                  </button>
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block">
-                    <button
-                      className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
-                      onClick={() => deleteLandingPage(page.id)}
-                    >
-                      <Trash2 className="h-4 w-4 inline-block mr-2" />
-                      Delete
-                    </button>
-                  </div>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <span className="sr-only">Open menu</span>
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => deleteLandingPage(page.id)} className="text-red-600">
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      <span>Delete</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             ))}
           </div>

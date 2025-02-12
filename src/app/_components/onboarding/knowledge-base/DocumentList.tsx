@@ -1,11 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { FileText, Plus, Trash2, AlertCircle, Eye } from "lucide-react"
+import { FileText, Plus, Trash2, AlertCircle, Eye, MoreVertical } from "lucide-react"
 import { getApi, postApi, deleteApi } from "@/lib/apiClient"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { useToast } from "@/components/ui/use-toast"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 interface Document {
   id: string
@@ -36,6 +38,7 @@ export function DocumentList() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [viewDocument, setViewDocument] = useState<Document | null>(null)
+  const { toast } = useToast()
 
   useEffect(() => {
     fetchDocuments()
@@ -60,7 +63,22 @@ export function DocumentList() {
   async function uploadDocument(file: File) {
     try {
       if (documents.length >= MAX_UPLOADS) {
-        setError(`Maximum number of document uploads (${MAX_UPLOADS}) reached`)
+        toast({
+          title: "Upload limit reached",
+          description: `Maximum number of document uploads (${MAX_UPLOADS}) reached`,
+          variant: "destructive",
+        })
+        return
+      }
+
+      // Check if the document is already uploaded
+      const existingDoc = documents.find((doc) => doc.file_name === file.name)
+      if (existingDoc) {
+        toast({
+          title: "Document already exists",
+          description: "This document has already been uploaded.",
+          variant: "destructive",
+        })
         return
       }
 
@@ -74,22 +92,38 @@ export function DocumentList() {
         throw new Error("Failed to upload document")
       }
       setDocuments((prev) => [newDocument, ...prev])
+      toast({
+        title: "Document uploaded",
+        description: "Your document has been successfully uploaded.",
+      })
     } catch (error) {
       console.error("Error uploading document:", error)
-      setError(error instanceof Error ? error.message : "Failed to upload document")
+      toast({
+        title: "Upload failed",
+        description: error instanceof Error ? error.message : "Failed to upload document",
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }
   }
 
-  async function deleteDocument(id: string, file_url: string) {
+  async function deleteDocument(id: string) {
     try {
       setLoading(true)
-      await deleteApi("/api/onboarding/files", { id, file_url })
+      await deleteApi("/api/onboarding/files", { id })
       setDocuments((prev) => prev.filter((doc) => doc.id !== id))
+      toast({
+        title: "Document deleted",
+        description: "The document has been successfully deleted.",
+      })
     } catch (error) {
       console.error("Error deleting document:", error)
-      setError(error instanceof Error ? error.message : "Failed to delete document")
+      toast({
+        title: "Deletion failed",
+        description: error instanceof Error ? error.message : "Failed to delete document",
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }
@@ -145,17 +179,24 @@ export function DocumentList() {
                   <span className="text-sm text-[#313D4F]">{doc.file_name}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" onClick={() => setViewDocument(doc)} title="View Document">
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => deleteDocument(doc.id, doc.file_url)}
-                    title="Delete Document"
-                  >
-                    <Trash2 className="h-4 w-4 text-red-500" />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => setViewDocument(doc)}>
+                        <Eye className="mr-2 h-4 w-4" />
+                        <span>View</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => deleteDocument(doc.id)} className="text-red-600">
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        <span>Delete</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             ))}
