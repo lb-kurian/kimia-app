@@ -4,6 +4,8 @@ import { cookies } from "next/headers"
 
 export const dynamic = "force-dynamic"
 
+const MAX_UPLOADS = 10
+
 async function getAuthenticatedClient() {
   const cookieStore = cookies()
   const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
@@ -55,12 +57,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing upload type" }, { status: 400 })
     }
 
+    // Check the number of existing uploads
+    const { count, error: countError } = await supabase
+      .from("files")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("upload_type", uploadType)
+
+    if (countError) throw countError
+
+    if (count >= MAX_UPLOADS) {
+      return NextResponse.json({ error: `Maximum number of ${uploadType} uploads reached` }, { status: 400 })
+    }
+
     let fileUrl = url
+    let fileName = null
 
     if (uploadType === "document" && file) {
-      const fileExt = file.name.split(".").pop()
-      const fileName = `${userId}_${Date.now()}.${fileExt}`
-      const filePath = `private/${userId}/documents/${fileName}`
+      fileName = file.name
+      const fileExt = fileName.split(".").pop()
+      const uniqueFileName = `${userId}_${Date.now()}_${fileName}`
+      const filePath = `private/${userId}/documents/${uniqueFileName}`
 
       const { error: uploadError } = await supabase.storage.from("files").upload(filePath, file, { upsert: true })
 
@@ -78,6 +95,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Missing URL for landing page or social media page" }, { status: 400 })
       }
       fileUrl = url
+      fileName = new URL(url).hostname
     }
 
     const { data, error } = await supabase
@@ -86,6 +104,7 @@ export async function POST(request: Request) {
         user_id: userId,
         upload_type: uploadType,
         file_url: fileUrl,
+        file_name: fileName,
       })
       .select()
       .single()

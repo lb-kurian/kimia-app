@@ -1,12 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { FileText, Plus, MoreVertical, Trash2, AlertCircle } from "lucide-react"
+import { FileText, Plus, Trash2, AlertCircle, Eye } from "lucide-react"
 import { getApi, postApi, deleteApi } from "@/lib/apiClient"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 interface Document {
   id: string
   file_url: string
+  file_name: string
   upload_type: string
   created_at: string
 }
@@ -25,10 +29,13 @@ const documentTypes = [
   "Policy Documents",
 ]
 
+const MAX_UPLOADS = 10
+
 export function DocumentList() {
   const [documents, setDocuments] = useState<Document[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [viewDocument, setViewDocument] = useState<Document | null>(null)
 
   useEffect(() => {
     fetchDocuments()
@@ -52,6 +59,11 @@ export function DocumentList() {
 
   async function uploadDocument(file: File) {
     try {
+      if (documents.length >= MAX_UPLOADS) {
+        setError(`Maximum number of document uploads (${MAX_UPLOADS}) reached`)
+        return
+      }
+
       setLoading(true)
       const formData = new FormData()
       formData.append("file", file)
@@ -100,7 +112,7 @@ export function DocumentList() {
             <Plus className="h-5 w-5" />
             Add a Document
           </label>
-          <input
+          <Input
             id="file-upload"
             type="file"
             className="hidden"
@@ -130,21 +142,20 @@ export function DocumentList() {
               <div key={doc.id} className="flex items-center justify-between rounded-lg border border-[#E8E8E8] p-4">
                 <div className="flex items-center gap-3">
                   <FileText className="h-6 w-6 text-[#038baf]" />
-                  <span className="text-sm text-[#313D4F]">{doc.file_url.split("/").pop()}</span>
+                  <span className="text-sm text-[#313D4F]">{doc.file_name}</span>
                 </div>
-                <div className="relative group">
-                  <button className="text-[#979797] hover:text-[#313D4F]">
-                    <MoreVertical className="h-5 w-5" />
-                  </button>
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block">
-                    <button
-                      className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
-                      onClick={() => deleteDocument(doc.id, doc.file_url)}
-                    >
-                      <Trash2 className="h-4 w-4 inline-block mr-2" />
-                      Delete
-                    </button>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" size="sm" onClick={() => setViewDocument(doc)} title="View Document">
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => deleteDocument(doc.id, doc.file_url)}
+                    title="Delete Document"
+                  >
+                    <Trash2 className="h-4 w-4 text-red-500" />
+                  </Button>
                 </div>
               </div>
             ))}
@@ -160,6 +171,17 @@ export function DocumentList() {
           </div>
         </div>
       </div>
+
+      <Dialog open={!!viewDocument} onOpenChange={() => setViewDocument(null)}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>{viewDocument?.file_name}</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4 h-[600px]">
+            <iframe src={viewDocument?.file_url} className="w-full h-full" />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
