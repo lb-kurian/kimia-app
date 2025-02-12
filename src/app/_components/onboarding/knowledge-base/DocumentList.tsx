@@ -2,15 +2,13 @@
 
 import { useState, useEffect } from "react"
 import { FileText, Plus, MoreVertical, Trash2, AlertCircle } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { getApi, postApi, deleteApi } from "@/lib/apiClient"
 
 interface Document {
   id: string
-  name: string
-  url: string
-  type: string
+  file_url: string
+  upload_type: string
+  created_at: string
 }
 
 const documentTypes = [
@@ -31,8 +29,6 @@ export function DocumentList() {
   const [documents, setDocuments] = useState<Document[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
-  const supabase = createClientComponentClient()
 
   useEffect(() => {
     fetchDocuments()
@@ -41,7 +37,7 @@ export function DocumentList() {
   async function fetchDocuments() {
     try {
       setLoading(true)
-      const data = await getApi<Document[]>("/api/onboarding/knowledge-base/document")
+      const data = await getApi<Document[]>("/api/onboarding/files?uploadType=document")
       if (!data) {
         throw new Error("No data received from the API")
       }
@@ -59,9 +55,9 @@ export function DocumentList() {
       setLoading(true)
       const formData = new FormData()
       formData.append("file", file)
-      formData.append("type", getDocumentType(file.name))
+      formData.append("uploadType", "document")
 
-      const newDocument = await postApi<Document>("/api/onboarding/knowledge-base/document", formData)
+      const newDocument = await postApi<Document>("/api/onboarding/files", formData)
       if (!newDocument) {
         throw new Error("Failed to upload document")
       }
@@ -74,30 +70,16 @@ export function DocumentList() {
     }
   }
 
-  async function deleteDocument(id: string, url: string) {
+  async function deleteDocument(id: string, file_url: string) {
     try {
       setLoading(true)
-      await deleteApi("/api/onboarding/knowledge-base/document", { id, url })
+      await deleteApi("/api/onboarding/files", { id, file_url })
       setDocuments((prev) => prev.filter((doc) => doc.id !== id))
     } catch (error) {
       console.error("Error deleting document:", error)
       setError(error instanceof Error ? error.message : "Failed to delete document")
     } finally {
       setLoading(false)
-    }
-  }
-
-  function getDocumentType(fileName: string): string {
-    const extension = fileName.split(".").pop()?.toLowerCase()
-    switch (extension) {
-      case "pdf":
-      case "doc":
-      case "docx":
-        return "document"
-      case "csv":
-        return "spreadsheet"
-      default:
-        return "other"
     }
   }
 
@@ -148,7 +130,7 @@ export function DocumentList() {
               <div key={doc.id} className="flex items-center justify-between rounded-lg border border-[#E8E8E8] p-4">
                 <div className="flex items-center gap-3">
                   <FileText className="h-6 w-6 text-[#038baf]" />
-                  <span className="text-sm text-[#313D4F]">{doc.name}</span>
+                  <span className="text-sm text-[#313D4F]">{doc.file_url.split("/").pop()}</span>
                 </div>
                 <div className="relative group">
                   <button className="text-[#979797] hover:text-[#313D4F]">
@@ -157,7 +139,7 @@ export function DocumentList() {
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block">
                     <button
                       className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
-                      onClick={() => deleteDocument(doc.id, doc.url)}
+                      onClick={() => deleteDocument(doc.id, doc.file_url)}
                     >
                       <Trash2 className="h-4 w-4 inline-block mr-2" />
                       Delete

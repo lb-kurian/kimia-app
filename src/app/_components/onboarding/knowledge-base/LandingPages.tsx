@@ -6,7 +6,9 @@ import { getApi, postApi, deleteApi } from "@/lib/apiClient"
 
 interface LandingPage {
   id: string
-  url: string
+  file_url: string
+  upload_type: string
+  created_at: string
 }
 
 const pageTypes = [
@@ -35,7 +37,7 @@ export function LandingPages() {
   async function fetchLandingPages() {
     try {
       setLoading(true)
-      const data = await getApi<LandingPage[]>("/api/onboarding/knowledge-base/landing-page")
+      const data = await getApi<LandingPage[]>("/api/onboarding/files?uploadType=landing_page")
       setLandingPages(data || [])
     } catch (error) {
       console.error("Error fetching landing pages:", error)
@@ -51,8 +53,12 @@ export function LandingPages() {
 
     try {
       setLoading(true)
-      const newPage = await postApi<LandingPage>("/api/onboarding/knowledge-base/landing-page", { url: newPageUrl })
-      setLandingPages((prev) => [...prev, newPage])
+      const formData = new FormData()
+      formData.append("url", newPageUrl)
+      formData.append("uploadType", "landing_page")
+
+      const newPage = await postApi<LandingPage>("/api/onboarding/files", formData)
+      setLandingPages((prev) => [newPage, ...prev])
       setNewPageUrl("")
     } catch (error) {
       console.error("Error adding landing page:", error)
@@ -65,7 +71,7 @@ export function LandingPages() {
   async function deleteLandingPage(id: string) {
     try {
       setLoading(true)
-      await deleteApi("/api/onboarding/knowledge-base/landing-page", { id })
+      await deleteApi("/api/onboarding/files", { id })
       setLandingPages((prev) => prev.filter((page) => page.id !== id))
     } catch (error) {
       console.error("Error deleting landing page:", error)
@@ -110,7 +116,7 @@ export function LandingPages() {
               <div key={page.id} className="flex items-center justify-between rounded-lg border border-[#E8E8E8] p-4">
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8 rounded-full bg-gradient-to-r from-[#4880FF] to-[#F57618]" />
-                  <span className="text-sm text-[#313D4F]">{page.url}</span>
+                  <span className="text-sm text-[#313D4F]">{page.file_url}</span>
                 </div>
                 <div className="relative group">
                   <button className="text-[#979797] hover:text-[#313D4F]">

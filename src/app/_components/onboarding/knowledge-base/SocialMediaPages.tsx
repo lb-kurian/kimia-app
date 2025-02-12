@@ -7,8 +7,9 @@ import { getApi, postApi, deleteApi } from "@/lib/apiClient"
 
 interface SocialMediaAccount {
   id: string
-  platform: string
-  handle: string
+  file_url: string
+  upload_type: string
+  created_at: string
 }
 
 const supportedPlatforms = ["Instagram", "X", "LinkedIn", "Facebook", "Reddit", "TikTok", "Pinterest", "YouTube"]
@@ -26,7 +27,7 @@ export function SocialMediaPages() {
   async function fetchSocialAccounts() {
     try {
       setLoading(true)
-      const data = await getApi<SocialMediaAccount[]>("/api/onboarding/knowledge-base/social-media")
+      const data = await getApi<SocialMediaAccount[]>("/api/onboarding/files?uploadType=social_media_page")
       if (!data) {
         throw new Error("No data received from the API")
       }
@@ -45,13 +46,15 @@ export function SocialMediaPages() {
 
     try {
       setLoading(true)
-      const addedAccount = await postApi<SocialMediaAccount>("/api/onboarding/knowledge-base/social-media", {
-        handle: newHandle,
-      })
+      const formData = new FormData()
+      formData.append("url", newHandle)
+      formData.append("uploadType", "social_media_page")
+
+      const addedAccount = await postApi<SocialMediaAccount>("/api/onboarding/files", formData)
       if (!addedAccount) {
         throw new Error("Failed to add social media account")
       }
-      setSocialAccounts((prev) => [...prev, addedAccount])
+      setSocialAccounts((prev) => [addedAccount, ...prev])
       setNewHandle("")
     } catch (error) {
       console.error("Error adding social media account:", error)
@@ -64,7 +67,7 @@ export function SocialMediaPages() {
   async function deleteSocialAccount(id: string) {
     try {
       setLoading(true)
-      await deleteApi("/api/onboarding/knowledge-base/social-media", { id })
+      await deleteApi("/api/onboarding/files", { id })
       setSocialAccounts((prev) => prev.filter((account) => account.id !== id))
     } catch (error) {
       console.error("Error deleting social media account:", error)
@@ -72,6 +75,11 @@ export function SocialMediaPages() {
     } finally {
       setLoading(false)
     }
+  }
+
+  function getPlatformIcon(url: string): string {
+    const platform = supportedPlatforms.find((p) => url.toLowerCase().includes(p.toLowerCase()))
+    return platform ? `/${platform.toLowerCase()}-icon.png` : "/placeholder.svg"
   }
 
   return (
@@ -89,7 +97,7 @@ export function SocialMediaPages() {
               type="text"
               value={newHandle}
               onChange={(e) => setNewHandle(e.target.value)}
-              placeholder="@username"
+              placeholder="@username or https://platform.com/username"
               className="flex-grow rounded-lg border border-[#E8E8E8] p-3"
               required
             />
@@ -114,14 +122,14 @@ export function SocialMediaPages() {
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8">
                     <Image
-                      src={`/${account.platform.toLowerCase()}-icon.png`}
-                      alt={account.platform}
+                      src={getPlatformIcon(account.file_url) || "/placeholder.svg"}
+                      alt={account.upload_type}
                       width={32}
                       height={32}
                       className="w-full h-full object-contain"
                     />
                   </div>
-                  <span className="text-sm text-[#313D4F]">{account.handle}</span>
+                  <span className="text-sm text-[#313D4F]">{account.file_url}</span>
                 </div>
                 <div className="relative group">
                   <button className="text-[#979797] hover:text-[#313D4F]">
