@@ -1,8 +1,10 @@
 "use client"
 
-import { Search, ChevronDown, Trash2, Info } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Search, ChevronDown, Trash2, Plus } from "lucide-react"
 import Image from "next/image"
-import { useState } from "react"
+import { getApi, postApi, deleteApi } from "@/lib/apiClient"
+import { useSession } from "next-auth/react"
 
 interface SystemSettingsProps {
   onNext: () => void
@@ -10,141 +12,186 @@ interface SystemSettingsProps {
   onSkip: () => void
 }
 
-const socialPlatforms = [
-  {
-    name: "Instagram",
-    icon: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/instagram-icon.png",
-    status: "connected",
-  },
-  {
-    name: "LinkedIn",
-    icon: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/linkedin-icon.png",
-    status: "connected",
-  },
-  { name: "Twitter", icon: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/x-icon.png", status: "connected" },
-  { name: "Tiktok", icon: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/tiktok-icon.png", status: "new" },
-  {
-    name: "Telegram",
-    icon: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/telegram-icon.png",
-    status: "coming_soon",
-  },
-  {
-    name: "Pinterest",
-    icon: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pinterest-icon.png",
-    status: "coming_soon",
-  },
-]
+interface SocialAccount {
+  id: string
+  platform: string
+  username: string
+  status: "connected" | "disconnected"
+}
 
-const connectedAccounts = [
-  {
-    platform: "linkedin",
-    username: "@t_amini",
-    name: "Toby Amini",
-    status: "connected",
-    lastUpdated: "About 1 hour ago",
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
-  {
-    platform: "facebook",
-    username: "@t_amini",
-    name: "Toby Amini",
-    status: "reconnect",
-    lastUpdated: "About 1 hour ago",
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
+const socialPlatforms = [
+  { name: "Instagram", icon: "/instagram-icon.png" },
+  { name: "Facebook", icon: "/facebook-icon.png" },
+  { name: "Twitter", icon: "/twitter-icon.png" },
+  { name: "TikTok", icon: "/tiktok-icon.png" },
 ]
 
 export function SystemSettings({ onNext, onBack, onSkip }: SystemSettingsProps) {
   const [searchQuery, setSearchQuery] = useState("")
+  const [socialAccounts, setSocialAccounts] = useState<SocialAccount[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const { data: session } = useSession()
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      fetchSocialAccounts()
+    }
+  }, [session])
+
+  async function fetchSocialAccounts() {
+    try {
+      setLoading(true)
+      const accounts = await getApi<SocialAccount[]>("/api/dashboard/social-accounts")
+      setSocialAccounts(accounts)
+    } catch (error) {
+      console.error("Error fetching social accounts:", error)
+      setError("Failed to fetch social accounts. Please try again later.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function addSocialAccount(platform: string) {
+    // In a real application, this would initiate the OAuth flow
+    // For now, we'll just simulate adding an account
+    try {
+      const newAccount = await postApi<SocialAccount>("/api/dashboard/social-accounts", { platform })
+      setSocialAccounts([...socialAccounts, newAccount])
+    } catch (error) {
+      console.error("Error adding social account:", error)
+    }
+  }
+
+  async function removeSocialAccount(id: string) {
+    try {
+      await deleteApi(`/api/dashboard/social-accounts/${id}`)
+      setSocialAccounts(socialAccounts.filter((account) => account.id !== id))
+    } catch (error) {
+      console.error("Error removing social account:", error)
+    }
+  }
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-[#202224]">System Setting</h1>
-        <p className="text-[#979797]">Add social media accounts</p>
+    <div className="rounded-xl border border-[#d9d9d9] flex flex-col min-h-[600px] p-8">
+      <div className="flex border-b border-[#d9d9d9]">
+        <div className="border-b-2 border-[#F57618] px-8 py-4 font-medium text-[#F57618]">System Setting</div>
       </div>
-
-      <div className="mb-8 rounded-lg border border-[#E8E8E8] p-6">
-        <h2 className="mb-4 text-lg font-medium text-[#313D4F]">Add your social accounts</h2>
-        <p className="mb-6 text-[#313D4F]">
-          You have connected <span className="font-medium">3 Accounts</span>, out of{" "}
-          <span className="font-medium">5 total Social Media Accounts</span> for your Plan.
-        </p>
-
-        <div className="grid grid-cols-6 gap-4">
-          {socialPlatforms.map((platform) => (
-            <div
-              key={platform.name}
-              className="flex flex-col items-center justify-center gap-2 rounded-lg border border-[#E8E8E8] p-4"
-            >
-              <Image src={platform.icon || "/placeholder.svg"} alt={platform.name} width={32} height={32} />
-              <span className="text-sm text-[#313D4F]">{platform.name}</span>
-              {platform.status === "coming_soon" && <span className="text-xs text-[#979797]">Coming soon</span>}
-              {platform.status === "new" && (
-                <span className="rounded bg-[#FDBCBC] px-2 py-0.5 text-xs text-[#CB1F27]">New</span>
-              )}
+      <div className="flex-grow overflow-y-auto p-8">
+        {session ? (
+          <>
+            <div className="mb-8">
+              <h1 className="text-2xl font-semibold text-[#313d4f]">System Setting</h1>
+              <p className="text-[#313d4f]">Add social media accounts</p>
             </div>
-          ))}
-        </div>
-      </div>
 
-      <div className="mb-4 grid grid-cols-[1fr,200px,200px] gap-4">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search"
-            className="w-full rounded-lg border border-[#E8E8E8] p-3 pl-10"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#979797]" />
-        </div>
-        <button className="flex items-center justify-between rounded-lg border border-[#E8E8E8] p-3 text-[#313D4F]">
-          <span>Platform</span>
-          <ChevronDown className="h-5 w-5" />
-        </button>
-        <button className="flex items-center justify-between rounded-lg border border-[#E8E8E8] p-3 text-[#313D4F]">
-          <span>Status</span>
-          <ChevronDown className="h-5 w-5" />
-        </button>
-      </div>
+            <div className="mb-8 rounded-lg border border-[#d9d9d9] p-6">
+              <h2 className="mb-4 text-lg font-medium text-[#313d4f]">Add your social accounts</h2>
+              <p className="mb-6 text-[#313d4f]">
+                You have connected <span className="font-medium">{socialAccounts.length} Accounts</span>.
+              </p>
 
-      <div className="space-y-4">
-        {connectedAccounts.map((account) => (
-          <div
-            key={account.platform + account.username}
-            className="flex items-center justify-between rounded-lg border border-[#E8E8E8] p-4"
-          >
-            <div className="flex items-center gap-3">
-              <div className="relative h-10 w-10 overflow-hidden rounded-full">
-                <Image src={account.avatar || "/placeholder.svg"} alt={account.name} fill className="object-cover" />
-              </div>
-              <div>
-                <div className="font-medium text-[#313D4F]">{account.name}</div>
-                <div className="text-sm text-[#979797]">{account.username}</div>
+              <div className="grid grid-cols-4 gap-4">
+                {socialPlatforms.map((platform) => (
+                  <div
+                    key={platform.name}
+                    className="flex flex-col items-center justify-center gap-2 rounded-lg border border-[#d9d9d9] p-4"
+                  >
+                    <Image src={platform.icon || "/placeholder.svg"} alt={platform.name} width={32} height={32} />
+                    <span className="text-sm text-[#313d4f]">{platform.name}</span>
+                    <button
+                      onClick={() => addSocialAccount(platform.name)}
+                      className="mt-2 rounded-full bg-[#038baf] px-3 py-1 text-xs text-white hover:bg-[#038baf]/90"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-[#979797]">{account.lastUpdated}</span>
-                <Info className="h-4 w-4 text-[#979797]" />
+
+            <div className="mb-4 flex items-center gap-4">
+              <div className="relative flex-grow">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="w-full rounded-lg border border-[#d9d9d9] p-3 pl-10"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#313d4f]" />
               </div>
-              <div
-                className={`rounded-full px-3 py-1 text-sm ${
-                  account.status === "connected" ? "bg-[#B7E3B4] text-[#313D4F]" : "bg-[#FDBCBC] text-[#CB1F27]"
-                }`}
-              >
-                {account.status === "connected" ? "Connected" : "Reconnect"}
-              </div>
-              <button className="text-[#979797] hover:text-[#CB1F27]">
-                <Trash2 className="h-5 w-5" />
+              <button className="flex items-center justify-between rounded-lg border border-[#d9d9d9] p-3 text-[#313d4f]">
+                <span>Platform</span>
+                <ChevronDown className="h-5 w-5" />
+              </button>
+              <button className="flex items-center justify-between rounded-lg border border-[#d9d9d9] p-3 text-[#313d4f]">
+                <span>Status</span>
+                <ChevronDown className="h-5 w-5" />
               </button>
             </div>
-          </div>
-        ))}
-      </div>
 
-      <div className="mt-8 flex items-center justify-between">
+            {error && <div className="mb-4 p-4 bg-[#FDBCBC] text-[#CB1F27] rounded-lg">{error}</div>}
+            <div className="space-y-4">
+              {loading ? (
+                <p className="text-[#313d4f]">Loading...</p>
+              ) : socialAccounts.length > 0 ? (
+                socialAccounts.map((account) => (
+                  <div
+                    key={account.id}
+                    className="flex items-center justify-between rounded-lg border border-[#d9d9d9] p-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="relative h-10 w-10 overflow-hidden rounded-full">
+                        <Image
+                          src={`/${account.platform.toLowerCase()}-icon.png`}
+                          alt={account.platform}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div>
+                        <div className="font-medium text-[#313d4f]">{account.username}</div>
+                        <div className="text-sm text-[#313d4f]">{account.platform}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div
+                        className={`rounded-full px-3 py-1 text-sm ${
+                          account.status === "connected" ? "bg-[#B7E3B4] text-[#313d4f]" : "bg-[#FDBCBC] text-[#CB1F27]"
+                        }`}
+                      >
+                        {account.status === "connected" ? "Connected" : "Disconnected"}
+                      </div>
+                      <button
+                        onClick={() => removeSocialAccount(account.id)}
+                        className="text-[#313d4f] hover:text-[#CB1F27]"
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-[#313d4f]">No social accounts found. Add some accounts to get started!</p>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full">
+            <p className="text-[#313d4f] text-xl mb-4">Please sign in to manage your social accounts.</p>
+            <button
+              onClick={() => {
+                /* Add your sign-in logic here */
+              }}
+              className="rounded-full border border-[#038baf] bg-[#038baf] px-8 py-2.5 text-white hover:bg-[#038baf]/90"
+            >
+              Sign In
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="flex items-center justify-between border-t border-[#d9d9d9] p-6">
         <button className="text-[#4880FF] underline" onClick={onSkip}>
           Skip
         </button>

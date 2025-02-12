@@ -12,7 +12,7 @@ interface BrandInformationProps {
 
 export function BrandInformation({ tabs, activeTab, onNext, onBack, onSkip, onTabChange }: BrandInformationProps) {
   return (
-    <div className="rounded-xl border border-[#E8E8E8]">
+    <div className="rounded-xl border border-[#E8E8E8] flex flex-col min-h-[600px]">
       <div className="flex border-b border-[#E8E8E8]">
         {tabs.map((tab) => (
           <button
@@ -26,11 +26,11 @@ export function BrandInformation({ tabs, activeTab, onNext, onBack, onSkip, onTa
           </button>
         ))}
       </div>
-
-      {activeTab === "Brand Overview" ? <BrandOverview /> : <VisualDesign />}
-
+      <div className="flex-grow overflow-y-auto">
+        {activeTab === "Brand Overview" ? <BrandOverview /> : <VisualDesign />}
+      </div>
       <div className="flex items-center justify-between border-t border-[#E8E8E8] p-6">
-        <button className="text-[#4880FF] underline" onClick={onSkip}>
+        <button className="text-[#038baf] underline" onClick={onSkip}>
           Skip
         </button>
         <div className="flex gap-4">

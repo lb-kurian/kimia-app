@@ -1,4 +1,9 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { ArrowLeft, ArrowRight, Sparkles, ChevronDown } from "lucide-react"
+import { getApi, postApi } from "@/lib/apiClient"
+import type React from "react" // Added import for React
 
 const businessModels = [
   "B2C (Business to Consumer)",
@@ -16,7 +21,73 @@ const businessModels = [
   "Other",
 ]
 
-export function BrandOverview() {
+interface BrandData {
+  id?: string
+  name: string
+  tagline: string
+  bio: string
+  business_model: string
+}
+
+interface BrandOverviewProps {
+  onNext: () => void
+}
+
+export function BrandOverview({ onNext }: BrandOverviewProps) {
+  const [brandData, setBrandData] = useState<BrandData>({
+    name: "",
+    tagline: "",
+    bio: "",
+    business_model: "",
+  })
+  const [loading, setLoading] = useState(true)
+  // Remove this line
+  // const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchBrandData()
+  }, [])
+
+  async function fetchBrandData() {
+    try {
+      setLoading(true)
+      const data = await getApi<BrandData>("/api/onboarding/brand-information")
+      if (data) {
+        setBrandData(data)
+      }
+    } catch (error) {
+      console.error("Error fetching brand data:", error)
+      // setError("Failed to load brand information")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function saveBrandData() {
+    if (!brandData.name.trim()) {
+      return
+    }
+
+    try {
+      setLoading(true)
+      await postApi("/api/onboarding/brand-information", brandData)
+      onNext()
+    } catch (error) {
+      console.error("Error saving brand data:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    setBrandData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  if (loading) {
+    return <div className="p-8 text-center">Loading...</div>
+  }
+
   return (
     <div className="p-8">
       <p className="mb-8 text-[#313D4F]">Provide a brief description of your brand and its core offerings.</p>
@@ -29,8 +100,14 @@ export function BrandOverview() {
             </label>
             <input
               type="text"
-              className="w-full rounded-lg border border-[#E8E8E8] p-3"
+              name="name"
+              value={brandData.name}
+              onChange={handleInputChange}
+              className={`w-full rounded-lg border p-3 ${
+                brandData.name.trim() === "" ? "border-red-500" : "border-[#E8E8E8]"
+              }`}
               placeholder="Organico Caffee"
+              required
             />
           </div>
 
@@ -39,6 +116,9 @@ export function BrandOverview() {
             <div className="relative">
               <input
                 type="text"
+                name="tagline"
+                value={brandData.tagline}
+                onChange={handleInputChange}
                 className="w-full rounded-lg border border-[#E8E8E8] p-3 pr-24"
                 placeholder="Good for the Earth, Great in Your Cup"
               />
@@ -62,6 +142,9 @@ export function BrandOverview() {
             <label className="block text-[#313D4F] font-medium">Brand Bio</label>
             <div className="relative">
               <textarea
+                name="bio"
+                value={brandData.bio}
+                onChange={handleInputChange}
                 className="w-full rounded-lg border border-[#E8E8E8] p-3 min-h-[200px]"
                 placeholder="At Organicoffee, we deliver the finest, organically grown coffee sourced from sustainable, fair trade farms. Our commitment to purity and quality ensures every cup is free from synthetic pesticides and fertilizers, while our eco-friendly packaging reflects our dedication to the environment. By choosing Organicoffee, you're supporting ethical practices and a healthier planet. Experience the pure, unadulterated taste of Organicoffee – Pure Brew, Pure Nature."
               />
@@ -83,8 +166,10 @@ export function BrandOverview() {
             <label className="block text-[#313D4F] font-medium">Business Model</label>
             <div className="relative">
               <select
+                name="business_model"
+                value={brandData.business_model}
+                onChange={handleInputChange}
                 className="w-full appearance-none rounded-lg border border-[#E8E8E8] p-3 pr-10 bg-white"
-                defaultValue=""
               >
                 <option value="" disabled>
                   Select a business model
@@ -106,6 +191,20 @@ export function BrandOverview() {
           <Sparkles className="h-4 w-4 text-[#4880FF]" />
           <span>This button will generate the content based on your uploaded Knowledge Base</span>
         </div>
+
+        {/* Remove the error message display */}
+        {/* {error && <p className="text-red-500 mt-4">{error}</p>} */}
+
+        {/* Removed the "Next" button */}
+        {/* <div className="flex justify-end mt-6">
+          <button
+            onClick={saveBrandData}
+            className="rounded-full border border-[#038baf] bg-[#038baf] px-8 py-2.5 text-white hover:bg-[#038baf]/90"
+            disabled={loading}
+          >
+            {loading ? "Saving..." : "Next"}
+          </button>
+        </div> */}
       </div>
     </div>
   )

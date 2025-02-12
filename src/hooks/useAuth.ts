@@ -54,19 +54,6 @@ export function useAuth() {
 
       if (error) throw error
 
-      const user = data?.user
-      if (!user) throw new Error("User sign-up failed.")
-
-      // Store user data in the user_profiles table
-      const { error: insertError } = await supabase.from("user_profiles").insert([
-        {
-          user_id: user.id,
-          email: user.email,
-        },
-      ])
-
-      if (insertError) throw insertError
-
       return { success: true, message: "Sign-up successful. Please check your email for verification." }
     } catch (error) {
       console.error("Sign-up error:", error)

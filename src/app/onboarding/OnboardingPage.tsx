@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react"
 import { Layout } from "../_components/onboarding/Layout"
 import { Introduction } from "../_components/onboarding/Introduction"
-import { Tabs } from "../_components/onboarding/Tabs"
+import { Tabs } from "../_components/onboarding/knowledge-base/Tabs"
 import { BrandInformation } from "../_components/onboarding/brand-information/BrandInformation"
 import { BrandVoice } from "../_components/onboarding/brand-voice/BrandVoice"
 import { TargetAudience } from "../_components/onboarding/target-audience/TargetAudience"

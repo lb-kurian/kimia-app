@@ -29,7 +29,7 @@ export function TargetAudience({ tabs, activeTab, onTabChange, onSkip, onNext, o
   }
 
   return (
-    <div className="rounded-xl border border-[#E8E8E8]">
+    <div className="rounded-xl border border-[#E8E8E8] flex flex-col min-h-[600px]">
       <div className="flex border-b border-[#E8E8E8]">
         {tabs.map((tab) => (
           <button
@@ -43,7 +43,7 @@ export function TargetAudience({ tabs, activeTab, onTabChange, onSkip, onNext, o
           </button>
         ))}
       </div>
-      {renderContent()}
+      <div className="flex-grow overflow-y-auto">{renderContent()}</div>
       <div className="flex items-center justify-between border-t border-[#E8E8E8] p-6">
         <button className="text-[#4880FF] underline" onClick={onSkip}>
           Skip
